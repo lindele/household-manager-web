@@ -1,0 +1,32 @@
+{
+  "name": "household-manager-web",
+  "version": "1.0.0",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel"
+  },
+  "repository": "git@github.com:lindele/household-manger-web.git",
+  "author": "lindele <eclindell@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@auth0/auth0-react": "^2.2.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.18.0",
+    "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.3.3",
+    "@parcel/source-map": "^2.1.1",
+    "@parcel/transformer-sass": "^2.10.2",
+    "@types/node": "^20.9.0",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "autoprefixer": "^10.4.16",
+    "parcel": "^2.8.1",
+    "postcss": "^8.4.31",
+    "process": "^0.11.10",
+    "tailwindcss": "^3.3.5"
+  },
+  "packageManager": "yarn@4.0.1"
+}
