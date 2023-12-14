@@ -2,31 +2,31 @@ import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 import { useForm } from "react-hook-form";
 
-const addTaskToDatabase = async () => {
-  // if (title !== "") {
-  // add it to db here
-  try {
-    await fetch("http://127.0.0.1:8000/tasks/add-task", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: "testing",
-        due_day: "Monday",
-        assigned_owner_id: 4,
-      }),
-    }).catch((error) => {
-      console.error(error);
-    });
+const addTaskToDatabase = async (data) => {
+  if (data.task !== "") {
+    // add it to db here
+    try {
+      await fetch("http://127.0.0.1:8000/tasks/add-task", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: data.task,
+          due_day: "Monday",
+          assigned_owner_id: 4,
+        }),
+      }).catch((error) => {
+        console.error(error);
+      });
 
-    // queryClient.invalidateQueries({ queryKey: ["tasks"] });
-  } catch (error) {
-    // Handle fetch or other errors
-    console.error("Error:", error);
-    // show a toast or other UI indication of the error?
+      // queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    } catch (error) {
+      // Handle fetch or other errors
+      console.error("Error:", error);
+      // show a toast or other UI indication of the error?
+    }
   }
-  // }
 };
 
 export function Home() {
@@ -40,7 +40,7 @@ export function Home() {
 
   const onSubmit = async (data) => {
     try {
-      await addTaskToDatabase();
+      await addTaskToDatabase(data);
     } catch (error) {
       console.error("Error adding task: ", error);
     }
@@ -53,7 +53,7 @@ export function Home() {
       {isAuthenticated && (
         <div>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <input {...register("task")} placeholder="Bill" />
+            <input {...register("task")} placeholder="Task Name" />
             <input type="submit" />
           </form>
         </div>
