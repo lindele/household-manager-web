@@ -23,9 +23,7 @@ export function App() {
       cacheLocation="localstorage"
     >
       <QueryClientProvider client={queryClient}>
-        <div className="App">
-          <h1>Hello, World!</h1>
-        </div>
+        <div className="App">{/* <h1>Hello, World!</h1> */}</div>
         <BrowserRouter>
           <Routes>
             <Route path="/">

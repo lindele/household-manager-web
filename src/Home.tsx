@@ -46,8 +46,8 @@ export function Home() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-    formState,
   } = useForm();
 
   const queryClient = useQueryClient();
@@ -71,7 +71,7 @@ export function Home() {
           body: JSON.stringify({
             title: data.task,
             due_day: data.task_due_day,
-            assigned_owner_id: 4,
+            assigned_owner_id: data.task_owner,
           }),
         }).catch((error) => {
           console.error(error);
@@ -85,14 +85,19 @@ export function Home() {
       }
     }
   };
+  const toggleLabel = () => {
+    if (taskToggleBool === undefined) {
+      ("Error");
+    }
 
-  // from here...
+    return taskToggleBool ? "All Tasks" : "Your Tasks";
+  };
+
   const displayTaskByOwnerSwitch = () => {
     return (
       <div id="toggleSwitch" className="flex max-w-md flex-col gap-4">
-        {(!taskToggleBool && <Label>Your Tasks</Label>) ||
-          (taskToggleBool && <Label>All Tasks</Label>)}
         <ToggleSwitch
+          label={toggleLabel()}
           checked={taskToggleBool}
           onChange={(taskToggleBool) => {
             toggleBooleanValue(taskToggleBool);
@@ -182,7 +187,7 @@ export function Home() {
           }),
         }
       );
-      const tasks = await response.json();
+      // const tasks = await response.json();
       // setTasks(tasks);
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     } catch (error) {
@@ -228,11 +233,11 @@ export function Home() {
       console.error("Error", error);
     }
   };
-  // ...to here
 
   const onSubmit = async (data) => {
     try {
       await addTaskToDatabase(data);
+      reset();
     } catch (error) {
       console.error("Error adding task: ", error);
     }
@@ -248,14 +253,13 @@ export function Home() {
 
   return (
     <>
-      <h1>Home</h1>
       {isLoading && <div>Loading ...</div>}
       {isAuthenticated && (
         <div>
           <div>{displayTaskByOwnerSwitch()}</div>
           <div> {displaySortedTasks()}</div>
           <form
-            className="flex max-w-md flex-col gap-4"
+            className="flex max-w-md flex-col gap-4 "
             onSubmit={handleSubmit(onSubmit)}
           >
             <div>
