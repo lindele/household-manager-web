@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 import {
@@ -10,13 +10,8 @@ import {
   Select,
   ToggleSwitch,
 } from "flowbite-react";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { Delete, PlusSquare } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Delete } from "lucide-react";
 import React from "react";
 
 enum dow {
@@ -39,8 +34,6 @@ let database = {
 };
 
 export function Home() {
-  // const isLoadingComplete = useCachedResources();
-
   const [taskToggleBool, setTaskToggle] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth0();
   const {
@@ -147,7 +140,7 @@ export function Home() {
     due_day: string;
   }) => {
     return (
-      <div key={task.id}>
+      <div key={task.id} className="flex">
         {/* <HStack space="md" alignItems="center"> */}
         <Checkbox
           checked={task.complete}
@@ -252,7 +245,7 @@ export function Home() {
   }
 
   return (
-    <>
+    <div className="flex items-center justify-center min-h-screen">
       {isLoading && <div>Loading ...</div>}
       {isAuthenticated && (
         <div>
@@ -302,6 +295,6 @@ export function Home() {
           </form>
         </div>
       )}
-    </>
+    </div>
   );
 }
