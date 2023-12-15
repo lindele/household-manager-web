@@ -1,42 +1,38 @@
 import React from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { Home } from "lucide-react";
+
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
 
 const NavigationBar = () => {
+  const { user, isAuthenticated, isLoading, logout } = useAuth0();
+
   return (
     <Navbar fluid rounded>
-      <Navbar.Brand href="https://flowbite-react.com">
-        <img
-          src="/favicon.svg"
-          className="mr-3 h-6 sm:h-9"
-          alt="Flowbite React Logo"
-        />
+      {/* TODO: add in website href */}
+      <Navbar.Brand href="">
+        <Home className="mr-3 h-6 sm:h-9" />
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-          Flowbite React
+          Household Manager
         </span>
       </Navbar.Brand>
       <div className="flex md:order-2">
         <Dropdown
           arrowIcon={false}
           inline
-          label={
-            <Avatar
-              alt="User settings"
-              img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-              rounded
-            />
-          }
+          label={<Avatar alt="User settings" img={user?.picture} rounded />}
         >
           <Dropdown.Header>
-            <span className="block text-sm">Bonnie Green</span>
+            <span className="block text-sm">{user?.name}</span>
             <span className="block truncate text-sm font-medium">
-              name@flowbite.com
+              {user?.email}
             </span>
           </Dropdown.Header>
           <Dropdown.Item>Dashboard</Dropdown.Item>
           <Dropdown.Item>Settings</Dropdown.Item>
           <Dropdown.Item>Earnings</Dropdown.Item>
           <Dropdown.Divider />
-          <Dropdown.Item>Sign out</Dropdown.Item>
+          <Dropdown.Item onClick={logout}>Sign out</Dropdown.Item>
         </Dropdown>
         <Navbar.Toggle />
       </div>
