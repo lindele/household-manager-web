@@ -2124,6 +2124,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.13.4":
+  version: 5.13.4
+  resolution: "@tanstack/query-core@npm:5.13.4"
+  checksum: 52158a21f82b79afed740339d57886a4b98227d0853bf547d76a54832cb297d8d50d078ab8e62809810b98c017f98fc4a2492dc2d34e71a4fac15eca9681d0b3
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.13.4":
+  version: 5.13.4
+  resolution: "@tanstack/react-query@npm:5.13.4"
+  dependencies:
+    "@tanstack/query-core": "npm:5.13.4"
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 626dd2ea2b87d88629423b3d0fe9c971bb6d58cbeb157c8a0f01b21acb5563a99d81d2eaeb5f800e4e9a4b56ce7426941e6ddf6fc3d8a60ba46e3e9673844441
+  languageName: node
+  linkType: hard
+
 "@trysound/sax@npm:0.2.0":
   version: 0.2.0
   resolution: "@trysound/sax@npm:0.2.0"
@@ -4026,11 +4044,13 @@ __metadata:
     "@biomejs/biome": "npm:1.3.3"
     "@parcel/source-map": "npm:^2.1.1"
     "@parcel/transformer-sass": "npm:^2.10.2"
+    "@tanstack/react-query": "npm:^5.13.4"
     "@types/node": "npm:^20.9.0"
     "@types/react": "npm:^18.2.37"
     "@types/react-dom": "npm:^18.2.15"
     autoprefixer: "npm:^10.4.16"
     flowbite-react: "npm:^0.7.2"
+    lucide-react: "npm:^0.295.0"
     parcel: "npm:^2.8.1"
     postcss: "npm:^8.4.31"
     process: "npm:^0.11.10"
@@ -4823,6 +4843,15 @@ __metadata:
   dependencies:
     yallist: "npm:^4.0.0"
   checksum: cb53e582785c48187d7a188d3379c181b5ca2a9c78d2bce3e7dee36f32761d1c42983da3fe12b55cb74e1779fa94cdc2e5367c028a9b35317184ede0c07a30a9
+  languageName: node
+  linkType: hard
+
+"lucide-react@npm:^0.295.0":
+  version: 0.295.0
+  resolution: "lucide-react@npm:0.295.0"
+  peerDependencies:
+    react: ^16.5.1 || ^17.0.0 || ^18.0.0
+  checksum: b084facd89b473c11e5cc6e74f4d0a1399ca63dd43458c9133ec32807e1349146eafec22a6a6ab29c40259eb1da26ffaf886776256b94d549ea17d18e88f546c
   languageName: node
   linkType: hard
 
