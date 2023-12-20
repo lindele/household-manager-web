@@ -1,18 +1,20 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import React from "react";
 import { useEffect, useState } from "react";
 
+import { useAuth0 } from "@auth0/auth0-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { Delete } from "lucide-react";
 import {
-  TextInput,
-  Label,
   Button,
   Checkbox,
+  Label,
   Select,
+  TextInput,
   ToggleSwitch,
 } from "flowbite-react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Delete } from "lucide-react";
-import React from "react";
+
+import NavigationBar from "../components/navbar";
 
 enum dow {
   Sunday = 0,
@@ -245,56 +247,67 @@ export function Home() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      {isLoading && <div>Loading ...</div>}
-      {isAuthenticated && (
-        <div>
-          <div>{displayTaskByOwnerSwitch()}</div>
-          <div> {displaySortedTasks()}</div>
-          <form
-            className="flex max-w-md flex-col gap-4 "
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div>
-              <TextInput
-                id="task"
-                type="text"
-                {...register("task")}
-                placeholder="Task Name"
-                required
-              />
-            </div>
+    <div>
+      <NavigationBar />
 
-            <div className="max-w-md">
-              <div className="mb-2 block">
-                <Label htmlFor="task_owner" value="Select Task Owner" />
+      <div className="flex items-center justify-center min-h-screen">
+        {isLoading && <div>Loading ...</div>}
+        {isAuthenticated && (
+          <div>
+            <div>{displayTaskByOwnerSwitch()}</div>
+            <div> {displaySortedTasks()}</div>
+            <form
+              className="flex max-w-md flex-col gap-4 "
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <div>
+                <TextInput
+                  id="task"
+                  type="text"
+                  {...register("task")}
+                  placeholder="Task Name"
+                  required
+                />
               </div>
-              <Select id="task_owner" {...register("task_owner")} required>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-              </Select>
-            </div>
 
-            <div className="max-w-md">
-              <div className="mb-2 block">
-                <Label htmlFor="daysOfTheWeek" value="Select day of the Week" />
+              <div className="max-w-md">
+                <div className="mb-2 block">
+                  <Label htmlFor="task_owner" value="Select Task Owner" />
+                </div>
+                <Select id="task_owner" {...register("task_owner")} required>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                </Select>
               </div>
-              <Select id="daysOfTheWeek" {...register("task_due_day")} required>
-                <option>Monday</option>
-                <option>Tuesday</option>
-                <option>Wednesday</option>
-                <option>Thursday</option>
-                <option>Friday</option>
-                <option>Saturday</option>
-                <option>Sunday</option>
-              </Select>
-            </div>
 
-            <Button type="submit">Submit</Button>
-          </form>
-        </div>
-      )}
+              <div className="max-w-md">
+                <div className="mb-2 block">
+                  <Label
+                    htmlFor="daysOfTheWeek"
+                    value="Select day of the Week"
+                  />
+                </div>
+                <Select
+                  id="daysOfTheWeek"
+                  {...register("task_due_day")}
+                  required
+                >
+                  <option>Monday</option>
+                  <option>Tuesday</option>
+                  <option>Wednesday</option>
+                  <option>Thursday</option>
+                  <option>Friday</option>
+                  <option>Saturday</option>
+                  <option>Sunday</option>
+                </Select>
+              </div>
+
+              <Button type="submit">Submit</Button>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
