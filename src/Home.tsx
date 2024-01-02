@@ -5,6 +5,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Delete } from "lucide-react";
+
 import {
   Button,
   Checkbox,
@@ -35,8 +36,19 @@ let database = {
   moneyYouOwe: -4,
 };
 
+class User {
+  id: number;
+  auth0_id: string;
+  email: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+}
+
 export function Home() {
   const [taskToggleBool, setTaskToggle] = useState(false);
+  const [current_user, setCurrentUser] = useState<User | undefined>(undefined);
+
   const { user, isAuthenticated, isLoading } = useAuth0();
   const {
     register,
@@ -46,7 +58,7 @@ export function Home() {
   } = useForm();
 
   const queryClient = useQueryClient();
-  useQuery({ queryKey: ["tasks"], queryFn: () => fetchTasks() });
+  // useQuery({ queryKey: ["tasks"], queryFn: () => fetchTasks() });
 
   const toggleBooleanValue = (
     value: boolean | ((prevState: boolean) => boolean)
@@ -58,6 +70,8 @@ export function Home() {
     if (data.task !== "") {
       // add it to db here
       try {
+        console.log("data is: ", data);
+        console.log("data specifically: ", data.task_owner);
         await fetch("http://127.0.0.1:8000/tasks/add-task", {
           method: "POST",
           headers: {
@@ -124,7 +138,8 @@ export function Home() {
             }) => (
               <React.Fragment key={task.id}>
                 {(!taskToggleBool &&
-                  database.userName === task.owner_id &&
+                  current_user &&
+                  current_user.id === task.owner_id &&
                   displayOneTaskLine(task)) ||
                   (taskToggleBool && displayOneTaskLine(task))}
               </React.Fragment>
@@ -211,29 +226,14 @@ export function Home() {
   } = useQuery({ queryKey: ["tasks"], queryFn: fetchTasks });
   useEffect(() => {
     const fetchData = async () => {
-      await fetchTasks();
-
       if (user != undefined && user.sub != undefined) {
-        newUser(user.sub);
+        userLogsIn(user.sub);
       }
+      await fetchTasks();
     };
 
     fetchData();
   }, [user, isPending]);
-
-  // useEffect(() => {
-  //   fetchTasks();
-  // }, []);
-
-  // if (isPending) {
-  //   return <h1>loading...</h1>;
-  // }
-
-  // useEffect(() => {
-  //   if (user != undefined && user.sub != undefined) {
-  //     newUser(user.sub);
-  //   }
-  // }, [user]);
 
   const deleteTaskByID = async (index: number) => {
     try {
@@ -254,7 +254,7 @@ export function Home() {
     }
   };
 
-  const userExists = async (user_auth0_id: string) => {
+  const doesUserExist = async (user_auth0_id: string) => {
     try {
       const response = await fetch(
         `http://127.0.0.1:8000/users/${user_auth0_id}`,
@@ -269,9 +269,9 @@ export function Home() {
       console.log(user.detail);
       if (user.detail == "Not Found") {
         console.log("WASN'T FOUND");
-        return false;
+        return null;
       } else {
-        return true;
+        return user;
       }
 
       // setTasks(tasks);
@@ -280,17 +280,13 @@ export function Home() {
       console.error("Error", error);
     }
   };
-  const newUser = async (user_auth0_id: string) => {
+
+  const userLogsIn = async (user_auth0_id: string) => {
+    let userExistsResult;
     try {
-      const userExistsResult = await userExists(user_auth0_id);
+      userExistsResult = await doesUserExist(user_auth0_id);
 
       if (!userExistsResult) {
-        console.log(
-          "CREWATE A NEW USER WITH now: ",
-          user_auth0_id,
-          user?.given_name,
-          user?.family_name
-        );
         await fetch("http://127.0.0.1:8000/users/register", {
           method: "POST",
           headers: {
@@ -298,24 +294,23 @@ export function Home() {
           },
           body: JSON.stringify({
             auth0_id: user_auth0_id,
-            email: user?.email,
-            username: user?.email,
-            first_name: user?.given_name,
-            last_name: user?.family_name,
+            email: user?.email || "undefined",
+            username: user?.email || "undefined",
+            first_name: user?.given_name || "undefined",
+            last_name: user?.family_name || "undefined",
           }),
         }).catch((error) => {
-          console.log("DID NOT CREATE");
           console.error(error);
         });
-      } else {
-        console.log("User already exists");
       }
     } catch (error) {
       console.error("Error", error);
     }
+    userExistsResult = await doesUserExist(user_auth0_id);
+    setCurrentUser(userExistsResult);
   };
 
-  const onSubmit = async (data) => {
+  const onTaskFormSubmit = async (data) => {
     try {
       await addTaskToDatabase(data);
       reset();
@@ -331,13 +326,13 @@ export function Home() {
       <div className="flex items-center justify-center min-h-screen">
         {isLoading && <div>Loading ...</div>}
 
-        {isAuthenticated && (
+        {isAuthenticated && current_user && (
           <div>
             <div>{displayTaskByOwnerSwitch()}</div>
             <div> {displaySortedTasks()}</div>
             <form
               className="flex max-w-md flex-col gap-4 "
-              onSubmit={handleSubmit(onSubmit)}
+              onSubmit={handleSubmit(onTaskFormSubmit)}
             >
               <div>
                 <TextInput
@@ -354,7 +349,10 @@ export function Home() {
                   <Label htmlFor="task_owner" value="Select Task Owner" />
                 </div>
                 <Select id="task_owner" {...register("task_owner")} required>
-                  <option>1</option>
+                  {/* options should be people in the household */}
+                  <option value={current_user.id}>
+                    {current_user.first_name}
+                  </option>
                   <option>2</option>
                   <option>3</option>
                 </Select>
