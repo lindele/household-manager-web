@@ -209,6 +209,31 @@ export function Home() {
     error,
     data: tasks,
   } = useQuery({ queryKey: ["tasks"], queryFn: fetchTasks });
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchTasks();
+
+      if (user != undefined && user.sub != undefined) {
+        newUser(user.sub);
+      }
+    };
+
+    fetchData();
+  }, [user, isPending]);
+
+  // useEffect(() => {
+  //   fetchTasks();
+  // }, []);
+
+  // if (isPending) {
+  //   return <h1>loading...</h1>;
+  // }
+
+  // useEffect(() => {
+  //   if (user != undefined && user.sub != undefined) {
+  //     newUser(user.sub);
+  //   }
+  // }, [user]);
 
   const deleteTaskByID = async (index: number) => {
     try {
@@ -229,6 +254,67 @@ export function Home() {
     }
   };
 
+  const userExists = async (user_auth0_id: string) => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/users/${user_auth0_id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const user = await response.json();
+      console.log(user.detail);
+      if (user.detail == "Not Found") {
+        console.log("WASN'T FOUND");
+        return false;
+      } else {
+        return true;
+      }
+
+      // setTasks(tasks);
+      // queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    } catch (error) {
+      console.error("Error", error);
+    }
+  };
+  const newUser = async (user_auth0_id: string) => {
+    try {
+      const userExistsResult = await userExists(user_auth0_id);
+
+      if (!userExistsResult) {
+        console.log(
+          "CREWATE A NEW USER WITH now: ",
+          user_auth0_id,
+          user?.given_name,
+          user?.family_name
+        );
+        await fetch("http://127.0.0.1:8000/users/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            auth0_id: user_auth0_id,
+            email: user?.email,
+            username: user?.email,
+            first_name: user?.given_name,
+            last_name: user?.family_name,
+          }),
+        }).catch((error) => {
+          console.log("DID NOT CREATE");
+          console.error(error);
+        });
+      } else {
+        console.log("User already exists");
+      }
+    } catch (error) {
+      console.error("Error", error);
+    }
+  };
+
   const onSubmit = async (data) => {
     try {
       await addTaskToDatabase(data);
@@ -238,20 +324,13 @@ export function Home() {
     }
   };
 
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  if (isPending) {
-    return <h1>loading...</h1>;
-  }
-
   return (
     <div>
       <NavigationBar />
 
       <div className="flex items-center justify-center min-h-screen">
         {isLoading && <div>Loading ...</div>}
+
         {isAuthenticated && (
           <div>
             <div>{displayTaskByOwnerSwitch()}</div>
