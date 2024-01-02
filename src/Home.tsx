@@ -254,14 +254,17 @@ export function Home() {
     }
   };
 
-  const userExists = async (user_id: string) => {
+  const userExists = async (user_auth0_id: string) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/users/${user_id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `http://127.0.0.1:8000/users/${user_auth0_id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const user = await response.json();
       console.log(user.detail);
       if (user.detail == "Not Found") {
@@ -277,14 +280,14 @@ export function Home() {
       console.error("Error", error);
     }
   };
-  const newUser = async (user_id: string) => {
+  const newUser = async (user_auth0_id: string) => {
     try {
-      const userExistsResult = await userExists(user_id);
+      const userExistsResult = await userExists(user_auth0_id);
 
       if (!userExistsResult) {
         console.log(
           "CREWATE A NEW USER WITH now: ",
-          user_id,
+          user_auth0_id,
           user?.given_name,
           user?.family_name
         );
@@ -294,18 +297,16 @@ export function Home() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            auth0_id: user_auth0_id,
             email: user?.email,
             username: user?.email,
-            first_name: user?.given_name || "DNE",
-            last_name: user?.family_name || "DNE",
+            first_name: user?.given_name,
+            last_name: user?.family_name,
           }),
         }).catch((error) => {
           console.log("DID NOT CREATE");
           console.error(error);
         });
-        // const new_user = await response.json();
-
-        console.log("new user created");
       } else {
         console.log("User already exists");
       }
